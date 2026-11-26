@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>TécnicoPro</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="TécnicoPro: diagnóstico, atendimento e laudo profissional em PDF, direto do pendrive. Teste grátis por 7 dias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: faixa azul-marinho com o laudo de exemplo (a "prova" do produto), depois seções claras em coluna de 1120px; o pulso do diagnóstico costura as seções. */
+:root {
+  --marinho: #0A1F3C; --marinho2: #12305E; --azul: #1257E6; --ciano: #12C2E9;
+  --bg: #F5F8FC; --sup: #FFFFFF; --tinta: #14213A; --suave: #55657E; --linha: #DCE4EF;
+  --azul-txt: #1257E6; --ok: #0E8A4F; --ok-bg: #E6F5EE; --alerta: #B25E00; --alerta-bg: #FFF3E2;
+  --f-disp: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  --f-txt: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --f-dado: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  --raio: 14px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #08162B; --sup: #0F2341; --tinta: #E6EDF7; --suave: #9AABC4; --linha: #22385A;
+  --azul-txt: #6FA8FF; --ok: #4FD18F; --ok-bg: #0F3324; --alerta: #F2A64A; --alerta-bg: #3A2710; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #08162B; --sup: #0F2341; --tinta: #E6EDF7; --suave: #9AABC4; --linha: #22385A;
+  --azul-txt: #6FA8FF; --ok: #4FD18F; --ok-bg: #0F3324; --alerta: #F2A64A; --alerta-bg: #3A2710; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--tinta); font: 400 16px/1.6 var(--f-txt); -webkit-font-smoothing: antialiased; }
+a { color: var(--azul-txt); }
+h1, h2, h3 { font-family: var(--f-disp); line-height: 1.12; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); font-weight: 800; letter-spacing: -.02em; }
+h3 { font-size: 1.08rem; font-weight: 700; }
+p { margin: 0; }
+.cx { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.olho { font: 600 .78rem/1 var(--f-txt); letter-spacing: .16em; text-transform: uppercase; color: var(--azul-txt); }
+.lead { color: var(--suave); font-size: 1.08rem; max-width: 62ch; }
+.secao { padding-block: clamp(56px, 8vw, 96px); }
+.secao-cab { display: grid; gap: 12px; margin-bottom: 40px; max-width: 760px; }
+
+.btn { display: inline-flex; align-items: center; gap: 10px; font: 600 1rem/1 var(--f-txt); text-decoration: none; border-radius: 999px; padding: 15px 24px; transition: transform .15s ease, background .15s ease; }
+.btn:focus-visible { outline: 3px solid var(--ciano); outline-offset: 3px; }
+.btn-pri { background: var(--azul); color: #fff; box-shadow: 0 10px 26px -10px rgba(18, 87, 230, .7); }
+.btn-pri:hover { background: #0F4CCB; transform: translateY(-1px); }
+.btn-sec { color: #fff; border: 1.5px solid rgba(255,255,255,.35); }
+.btn-sec:hover { border-color: #fff; }
+.btn svg { width: 20px; height: 20px; flex: none; }
+
+/* topo + herói (faixa marinho nos dois temas) */
+.heroi { background: radial-gradient(900px 520px at 92% -10%, rgba(18,194,233,.22), transparent 60%), linear-gradient(165deg, var(--marinho) 0%, var(--marinho2) 100%); color: #fff;
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); position: relative; overflow: hidden; }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; }
+.marca { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
+.marca svg { width: 40px; height: 40px; flex: none; }
+.marca b { font: 800 1.35rem/1 var(--f-disp); letter-spacing: -.02em; }
+.marca b span { color: #6FB6FF; }
+.marca small { display: block; font: 600 .62rem/1 var(--f-txt); letter-spacing: .22em; color: #A9BBD6; margin-top: 5px; }
+.nav-links { display: flex; gap: 26px; align-items: center; }
+.nav-links a { color: #C9D6EA; text-decoration: none; font-weight: 500; font-size: .95rem; }
+.nav-links a:hover { color: #fff; }
+.nav-links .btn { padding: 11px 18px; font-size: .92rem; color: #fff; }
+.heroi-grade { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding-block: 48px 88px; }
+.heroi h1 { font-size: clamp(2.3rem, 5.2vw, 3.9rem); font-weight: 800; letter-spacing: -.03em; }
+.heroi h1 em { font-style: normal; background: linear-gradient(90deg, #6FB6FF, var(--ciano)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.heroi .lead { color: #C9D6EA; margin-top: 20px; font-size: 1.15rem; }
+.heroi-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.selos { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 28px; color: #A9BBD6; font-size: .9rem; }
+.selos span { display: inline-flex; align-items: center; gap: 7px; }
+.selos span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ciano); }
+
+/* o laudo de exemplo */
+.laudo { background: #fff; color: #14213A; border-radius: 18px; padding: 22px; box-shadow: 0 40px 80px -30px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); position: relative; transform: rotate(1.2deg); max-width: 100%; }
+.laudo-tag { position: absolute; top: -12px; right: 18px; background: var(--ciano); color: var(--marinho); font: 700 .7rem/1 var(--f-txt); letter-spacing: .1em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; }
+.laudo-cab { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding-bottom: 14px; border-bottom: 1px solid #E3E9F2; }
+.laudo-cab b { font: 800 1rem/1.2 var(--f-disp); color: #0A1F3C; }
+.laudo-cab small { display: block; color: #5B6B82; font-size: .78rem; margin-top: 3px; }
+.laudo-os { font: 700 .78rem/1 var(--f-dado); color: #1257E6; background: #EEF4FF; padding: 6px 8px; border-radius: 6px; white-space: nowrap; }
+.notas { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin: 18px 0; }
+.nota { border-radius: 12px; padding: 12px 14px; text-align: center; }
+.nota small { display: block; font: 600 .68rem/1 var(--f-txt); letter-spacing: .12em; text-transform: uppercase; }
+.nota strong { display: block; font: 700 2.3rem/1.1 var(--f-dado); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.nota strong span { font-size: .9rem; opacity: .6; }
+.nota.entrada { background: #FFF3E2; color: #9A4F00; }
+.nota.saida { background: #E6F5EE; color: #0B7A45; }
+.notas svg { width: 56px; height: 28px; }
+.itens { display: grid; gap: 8px; font-size: .86rem; }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 8px 10px; background: #F6F8FC; border-radius: 8px; }
+.item span:last-child { font-family: var(--f-dado); font-size: .78rem; font-weight: 700; color: #0B7A45; white-space: nowrap; }
+.laudo-pe { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #D3DCE8; font-size: .8rem; color: #5B6B82; }
+.laudo-pe b { color: #0A1F3C; }
+.assin { font: italic 600 1.25rem/1 'Segoe Script', 'Brush Script MT', cursive; color: #1257E6; }
+.pulso { position: absolute; left: 0; right: 0; bottom: 18px; width: 100%; height: 60px; opacity: .55; pointer-events: none; }
+
+/* faixa de prova */
+.faixa { border-bottom: 1px solid var(--linha); background: var(--sup); }
+.faixa .cx { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-block: 26px; }
+.faixa div { display: grid; gap: 2px; }
+.faixa strong { font: 700 1.25rem/1.2 var(--f-disp); }
+.faixa span { color: var(--suave); font-size: .9rem; }
+
+/* fluxo do atendimento */
+.fluxo { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; counter-reset: f; position: relative; }
+.fluxo::before { content: ""; position: absolute; left: 6%; right: 6%; top: 21px; height: 2px; background: linear-gradient(90deg, var(--azul), var(--ciano)); opacity: .5; }
+.fluxo li { counter-increment: f; display: grid; gap: 10px; justify-items: start; padding-right: 16px; position: relative; }
+.fluxo li::before { content: counter(f); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--sup); border: 2px solid var(--azul); color: var(--azul-txt); font: 700 1rem/1 var(--f-dado); }
+.fluxo p { color: var(--suave); font-size: .92rem; }
+
+/* recursos */
+.recursos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.rec { background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 26px; display: grid; gap: 10px; align-content: start; }
+.rec svg { width: 30px; height: 30px; color: var(--azul-txt); }
+.rec p { color: var(--suave); font-size: .95rem; }
+.rec ul { margin: 4px 0 0; padding-left: 18px; color: var(--suave); font-size: .9rem; display: grid; gap: 4px; }
+
+/* segurança */
+.seg { background: var(--sup); border-block: 1px solid var(--linha); }
+.seg-grade { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+.seg-lista { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 32px; }
+.seg-lista div { display: grid; gap: 6px; }
+.seg-lista b { font-family: var(--f-disp); font-size: 1.02rem; }
+.seg-lista p { color: var(--suave); font-size: .93rem; }
+.cod { font-family: var(--f-dado); font-size: .9em; background: var(--bg); border: 1px solid var(--linha); padding: 1px 6px; border-radius: 6px; }
+
+/* planos */
+.planos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+.plano { background: var(--sup); border: 1px solid var(--linha); border-radius: 18px; padding: 30px 26px; display: flex; flex-direction: column; gap: 16px; }
+.plano.destaque { border: 2px solid var(--azul); box-shadow: 0 24px 50px -28px rgba(18,87,230,.55); position: relative; }
+.plano.destaque::before { content: "Recomendado"; position: absolute; top: -13px; left: 24px; background: var(--azul); color: #fff; font: 600 .72rem/1 var(--f-txt); letter-spacing: .08em; text-transform: uppercase; padding: 7px 11px; border-radius: 999px; }
+.preco { font: 800 2.2rem/1 var(--f-disp); letter-spacing: -.02em; }
+.preco small { font: 500 .95rem/1 var(--f-txt); color: var(--suave); letter-spacing: 0; }
+.preco-sub { color: var(--suave); font-size: .9rem; min-height: 1.4em; }
+.plano ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; font-size: .95rem; flex: 1; }
+.plano li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; }
+.plano li::before { content: ""; width: 18px; height: 18px; margin-top: 3px; border-radius: 50%; background: var(--ok-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%230E8A4F' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+.plano .btn { justify-content: center; }
+.btn-claro { background: var(--bg); color: var(--tinta); border: 1.5px solid var(--linha); }
+.btn-claro:hover { border-color: var(--azul); }
+.nota-planos { margin-top: 18px; color: var(--suave); font-size: .9rem; }
+
+/* começar */
+.passos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.passo { border-top: 3px solid var(--azul); padding-top: 18px; display: grid; gap: 8px; align-content: start; }
+.passo small { font: 700 .8rem/1 var(--f-dado); color: var(--azul-txt); }
+.passo p { color: var(--suave); font-size: .95rem; }
+
+/* dúvidas */
+.faq { display: grid; gap: 12px; max-width: 860px; }
+.faq details { background: var(--sup); border: 1px solid var(--linha); border-radius: 12px; padding: 0 20px; }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 0; font: 600 1.02rem/1.4 var(--f-txt); display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 500 1.4rem/1 var(--f-txt); color: var(--azul-txt); }
+.faq details[open] summary::after { content: "−"; }
+.faq summary:focus-visible { outline: 2px solid var(--azul); outline-offset: 4px; border-radius: 6px; }
+.faq details p { padding-bottom: 18px; color: var(--suave); }
+
+/* chamada final + rodapé (marinho nos dois temas) */
+.final { background: linear-gradient(165deg, var(--marinho), var(--marinho2)); color: #fff; text-align: left; }
+.final .cx { display: grid; grid-template-columns: 1.3fr .7fr; gap: 32px; align-items: center; padding-block: 72px; }
+.final h2 { color: #fff; }
+.final p { color: #C9D6EA; margin-top: 12px; max-width: 56ch; }
+.final .contato { display: grid; gap: 12px; justify-items: start; }
+.final .num { font: 700 1.4rem/1 var(--f-dado); color: #fff; user-select: all; }
+.final small { color: #A9BBD6; }
+footer { background: #071429; color: #8FA3C0; font-size: .85rem; }
+footer .cx { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding-block: 26px; }
+footer a { color: #C9D6EA; }
+
+@media (max-width: 960px) {
+  .heroi-grade, .seg-grade, .final .cx { grid-template-columns: 1fr; }
+  .laudo { transform: none; max-width: 520px; }
+  .recursos, .planos { grid-template-columns: 1fr 1fr; }
+  .fluxo { grid-template-columns: repeat(3, 1fr); row-gap: 28px; }
+  .fluxo::before { display: none; }
+  .passos { grid-template-columns: 1fr 1fr; }
+  .faixa .cx { grid-template-columns: 1fr 1fr; }
+  .nav-links a:not(.btn) { display: none; }
+}
+@media (max-width: 600px) {
+  .recursos, .planos, .seg-lista, .passos { grid-template-columns: 1fr; }
+  .fluxo { grid-template-columns: 1fr 1fr; }
+  .notas { grid-template-columns: 1fr 1fr; } .notas svg { display: none; }
+  .nav-links .btn { padding: 10px 14px; font-size: .85rem; }
+  .marca small { display: none; }
+  .heroi-grade { padding-block: 24px 64px; }
+}
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+</style>
+
+<header class="heroi">
+  <div class="cx">
+    <nav class="nav" aria-label="Principal">
+      <a class="marca" href="#topo" id="topo" aria-label="TécnicoPro">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1257E6"/><stop offset="1" stop-color="#12C2E9"/></linearGradient></defs><rect width="120" height="120" rx="28" fill="#FFFFFF" fill-opacity=".08" stroke="#FFFFFF" stroke-opacity=".25" stroke-width="2"/><path d="M30 36H90M60 36V68" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 88H45L52 76L61 100L68 88H98" fill="none" stroke="url(#gm)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b>Técnico<span>Pro</span></b><small>POR MG TELECOM</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#recursos">Recursos</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a>
+        <a class="btn btn-pri js-teste" href="#" target="_blank" rel="noopener">Testar grátis</a>
+      </div>
+    </nav>
+    <div class="heroi-grade">
+      <div>
+        <h1>Do diagnóstico ao <em>laudo em PDF</em>, direto do pendrive.</h1>
+        <p class="lead">O TécnicoPro é o painel de trabalho do técnico de informática: diagnostica o PC do cliente em minutos, executa os reparos, registra a OS e entrega um laudo profissional com a sua marca, PIX e garantia.</p>
+        <div class="heroi-acoes">
+          <a class="btn btn-pri js-teste" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.8-.1 1.4Z"/></svg>Testar grátis por 7 dias</a>
+          <a class="btn btn-sec" href="#recursos">Ver o que ele faz</a>
+        </div>
+        <div class="selos"><span>Sem instalar nada no PC do cliente</span><span>Windows 10 e 11</span><span>Dados criptografados</span></div>
+      </div>
+      <figure class="laudo" aria-label="Exemplo de laudo gerado pelo TécnicoPro" style="margin:0">
+        <span class="laudo-tag">Exemplo de laudo</span>
+        <div class="laudo-cab">
+          <div><b>Laudo técnico</b><small>Notebook Dell Inspiron 15 · Cliente: Mariana S.</small></div>
+          <span class="laudo-os">OS #0142</span>
+        </div>
+        <div class="notas">
+          <div class="nota entrada"><small>Entrada</small><strong>48<span>/100</span></strong></div>
+          <svg viewBox="0 0 56 28" aria-hidden="true"><path d="M2 14H18L23 6L30 22L35 14H46" fill="none" stroke="#12C2E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 9L50 14L44 19" fill="none" stroke="#1257E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="nota saida"><small>Saída</small><strong>91<span>/100</span></strong></div>
+        </div>
+        <div class="itens">
+          <div class="item"><span>Troca de HD por SSD 480 GB</span><span>saúde 100%</span></div>
+          <div class="item"><span>Temperatura do processador</span><span>94 → 68 °C</span></div>
+          <div class="item"><span>Windows Update e drivers</span><span>31 instalados</span></div>
+          <div class="item"><span>Verificação de vírus e adware</span><span>limpo</span></div>
+        </div>
+        <div class="laudo-pe"><span>Garantia <b>90 dias</b> · PIX do saldo com QR Code</span><span class="assin">Mariana S.</span></div>
+      </figure>
+    </div>
+  </div>
+  <svg class="pulso" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="gp" x1="0" x2="1"><stop offset="0" stop-color="#1257E6" stop-opacity="0"/><stop offset=".45" stop-color="#12C2E9"/><stop offset="1" stop-color="#1257E6" stop-opacity="0"/></linearGradient></defs><path d="M0 34H520L548 12L582 54L606 34H1200" fill="none" stroke="url(#gp)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</header>
+
+<section class="faixa" aria-label="Destaques">
+  <div class="cx">
+    <div><strong>1 pendrive</strong><span>leva o painel inteiro para qualquer PC</span></div>
+    <div><strong>Nota de 0 a 100</strong><span>saúde do PC na entrada e na saída</span></div>
+    <div><strong>Laudo em PDF</strong><span>com sua marca, fotos e assinatura</span></div>
+    <div><strong>7 dias grátis</strong><span>para testar nos seus atendimentos</span></div>
+  </div>
+</section>
+
+<main>
+  <section class="secao" id="atendimento">
+    <div class="cx">
+      <div class="secao-cab">
+        <span class="olho">Um atendimento completo</span>
+        <h2>Da bancada à entrega, cada etapa registrada.</h2>
+        <p class="lead">Tudo o que você faz no PC do cliente entra na ordem de serviço sozinho. No final, o laudo mostra o antes e o depois.</p>
+      </div>
+      <ol class="fluxo">
+        <li><h3>Recebe</h3><p>Abre a OS com cliente, equipamento e defeito. Imprime o comprovante de entrada.</p></li>
+        <li><h3>Diagnostica</h3><p>Disco, memória, temperatura, bateria, drivers, vírus e estabilidade em minutos.</p></li>
+        <li><h3>Orça</h3><p>Monta o orçamento com seu catálogo e envia pelo WhatsApp para aprovar.</p></li>
+        <li><h3>Repara</h3><p>SFC, DISM, limpeza, Windows Update, drivers e programas com um clique.</p></li>
+        <li><h3>Comprova</h3><p>Diagnóstico de saída e testes de hardware mostram que o problema foi resolvido.</p></li>
+        <li><h3>Entrega</h3><p>Laudo em PDF, cobrança por PIX, assinatura do cliente na tela e garantia.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao" id="recursos" style="padding-top:0">
+    <div class="cx">
+      <div class="secao-cab">
+        <span class="olho">Recursos</span>
+        <h2>As ferramentas do técnico, num painel só.</h2>
+      </div>
+      <div class="recursos">
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+          <h3>Diagnóstico e monitoramento</h3>
+          <p>Nota de saúde, problemas encontrados e recomendações em linguagem simples. Monitoramento ao vivo de CPU, memória, GPU, disco e rede.</p>
+        </article>
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4Z"/></svg>
+          <h3>Reparos com um clique</h3>
+          <ul><li>Manutenção completa em sequência</li><li>SFC, DISM, CHKDSK e limpeza</li><li>Windows Update, rede e impressão</li><li>Tela azul, adware e antivírus</li></ul>
+        </article>
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>
+          <h3>Testes de hardware</h3>
+          <ul><li>Estresse de CPU, disco e memória</li><li>Bateria, placa de vídeo e USB</li><li>Teclado, mouse, som, microfone e webcam</li><li>Velocidade da internet</li></ul>
+        </article>
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+          <h3>Laudo, orçamento e PIX</h3>
+          <p>Laudo em PDF com sua marca, orçamento pelo WhatsApp, PIX com QR Code, fotos do equipamento, assinatura na tela e garantia com data.</p>
+        </article>
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+          <h3>Gestão da assistência</h3>
+          <p>Recebido no mês, valores a receber, clientes com histórico, garantias vencendo, agenda de visitas e catálogo com estoque.</p>
+        </article>
+        <article class="rec">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <h3>Contratos com empresas</h3>
+          <p>Monitore os PCs dos seus clientes empresariais todos os dias, receba alertas e gere o relatório mensal em PDF para cobrar o contrato.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao seg" id="seguranca">
+    <div class="cx seg-grade">
+      <div class="secao-cab" style="margin:0">
+        <span class="olho">Segurança e tranquilidade</span>
+        <h2>Os dados dos seus clientes protegidos, mesmo se o pendrive se perder.</h2>
+        <p class="lead">Atendimentos, fotos e cadastros ficam criptografados e só abrem com o seu login. A MG Telecom não recebe os dados dos seus clientes.</p>
+      </div>
+      <div class="seg-lista">
+        <div><b>Criptografia AES-256</b><p>Atendimentos, clientes, fotos e inventários cifrados no pendrive, com login e senha para cada técnico.</p></div>
+        <div><b>Backup automático</b><p>Cópia dos dados no seu Google Drive ou OneDrive sempre que algo muda.</p></div>
+        <div><b>Atualizações automáticas</b><p>Versões novas chegam com um clique e são conferidas pela assinatura digital da MG Telecom.</p></div>
+        <div><b>Código de recuperação</b><p>Esqueceu a senha? O código entregue no primeiro acesso libera uma senha nova.</p></div>
+        <div><b>Nada fica no PC do cliente</b><p>O painel roda do pendrive, no endereço <span class="cod">localhost:8765</span>, e só aceita conexões do próprio computador.</p></div>
+        <div><b>Termos e LGPD</b><p>Termos de Uso, Licença e Política de Privacidade claros, aceitos na ativação.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="planos">
+    <div class="cx">
+      <div class="secao-cab">
+        <span class="olho">Planos</span>
+        <h2>Comece testando. Contrate quando vir o resultado.</h2>
+        <p class="lead">Cada licença vale para um pendrive. Os seus atendimentos do período de teste continuam salvos quando você contratar.</p>
+      </div>
+      <div class="planos">
+        <article class="plano">
+          <h3>Teste grátis</h3>
+          <div class="preco">R$ 0 <small>por 7 dias</small></div>
+          <p class="preco-sub">Sem cartão, sem compromisso.</p>
+          <ul><li>Todos os recursos liberados</li><li>Use nos seus atendimentos reais</li><li>Suporte pelo WhatsApp</li></ul>
+          <a class="btn btn-claro js-teste" href="#" target="_blank" rel="noopener">Quero testar</a>
+        </article>
+        <article class="plano destaque">
+          <h3>Técnico</h3>
+          <div class="preco" data-preco="tecnico">Sob consulta</div>
+          <p class="preco-sub" data-preco-sub="tecnico">Mensal ou anual.</p>
+          <ul><li>Diagnóstico, reparos e testes</li><li>Atendimentos, laudo em PDF e PIX</li><li>Gestão, clientes e estoque</li><li>Backup e atualizações automáticas</li></ul>
+          <a class="btn btn-pri js-plano" data-plano="Técnico" href="#" target="_blank" rel="noopener">Contratar</a>
+        </article>
+        <article class="plano">
+          <h3>Empresa</h3>
+          <div class="preco" data-preco="empresa">Sob consulta</div>
+          <p class="preco-sub" data-preco-sub="empresa">Para quem atende contratos.</p>
+          <ul><li>Tudo do plano Técnico</li><li>Monitoramento diário de máquinas</li><li>Alertas e relatório mensal em PDF</li><li>Até 3 técnicos, cada um com seu pendrive</li></ul>
+          <a class="btn btn-claro js-plano" data-plano="Empresa" href="#" target="_blank" rel="noopener">Falar com a MG Telecom</a>
+        </article>
+      </div>
+      <p class="nota-planos">Pagamento por PIX. A licença é enviada pelo WhatsApp e a ativação leva um minuto.</p>
+    </div>
+  </section>
+
+  <section class="secao" id="comecar" style="padding-top:0">
+    <div class="cx">
+      <div class="secao-cab">
+        <span class="olho">Como começar</span>
+        <h2>Em quatro passos você já está atendendo.</h2>
+      </div>
+      <div class="passos">
+        <div class="passo"><small>PASSO 1</small><h3>Chame no WhatsApp</h3><p>Peça o teste grátis. Você recebe o TécnicoPro e o manual em PDF.</p></div>
+        <div class="passo"><small>PASSO 2</small><h3>Copie para o pendrive</h3><p>Coloque a pasta no pendrive e abra o <span class="cod">Abrir TecnicoPro</span>.</p></div>
+        <div class="passo"><small>PASSO 3</small><h3>Envie o código</h3><p>A tela mostra um código como <span class="cod">ABCD-EFGH-JKLM-NPQR</span>. Mande para nós.</p></div>
+        <div class="passo"><small>PASSO 4</small><h3>Carregue a licença</h3><p>Você recebe o arquivo de licença, carrega no painel e começa a atender.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="duvidas" style="padding-top:0">
+    <div class="cx">
+      <div class="secao-cab"><span class="olho">Dúvidas</span><h2>Perguntas frequentes</h2></div>
+      <div class="faq">
+        <details><summary>Precisa instalar alguma coisa no computador do cliente?</summary><p>Não. O TécnicoPro roda direto do pendrive, usando o PowerShell que já vem no Windows. O único item instalável é o Agente, usado nos contratos com empresas, e só se você quiser.</p></details>
+        <details><summary>Funciona em quais versões do Windows?</summary><p>Windows 10 e Windows 11. O painel abre no navegador do próprio computador, e o diagnóstico funciona mesmo sem internet.</p></details>
+        <details><summary>E se eu perder o pendrive?</summary><p>Os dados dos clientes estão criptografados e não abrem sem a sua senha. Com o backup automático ativo no seu PC, você restaura tudo num pendrive novo e pede uma nova licença.</p></details>
+        <details><summary>Posso usar em vários pendrives?</summary><p>Cada licença vale para um pendrive. Para equipes, o plano Empresa inclui até 3 técnicos, cada um com o seu pendrive.</p></details>
+        <details><summary>O laudo sai com a minha marca?</summary><p>Sim. Você cadastra o nome da empresa, logo, contatos, CPF/CNPJ e chave PIX, e tudo sai no laudo e no comprovante de entrada.</p></details>
+        <details><summary>O que acontece quando o teste grátis termina?</summary><p>O painel avisa quantos dias faltam. Quando você contratar, carrega a licença nova no mesmo pendrive e continua com todos os atendimentos feitos no teste.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="final" aria-label="Fale com a MG Telecom">
+  <div class="cx">
+    <div>
+      <h2>Faça o próximo atendimento com o TécnicoPro.</h2>
+      <p>Chame no WhatsApp, receba o teste grátis de 7 dias e veja a diferença no primeiro laudo que entregar.</p>
+    </div>
+    <div class="contato">
+      <a class="btn btn-pri js-teste" href="#" target="_blank" rel="noopener">Testar grátis por 7 dias</a>
+      <span class="num">(21) 95903-6760</span>
+      <small>WhatsApp da MG Telecom</small>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="cx">
+    <span>TécnicoPro © <span id="ano">2026</span> MG Telecom · CNPJ 41.996.151/0001-29 · Rio de Janeiro/RJ</span>
+    <span>Tecnologia que conecta.</span>
+  </div>
+</footer>
+
+<script>
+  // Preços: troque null pelo valor (ex.: 'R$ 49') para exibir na página.
+  const PRECOS = {
+    tecnico: { valor: 'R$ 59,90', periodo: '/mês', sub: '1 técnico · 1 pendrive.' },
+    empresa: { valor: 'R$ 129,90', periodo: '/mês', sub: 'Até 3 técnicos · 3 pendrives.' }
+  };
+  const WHATS = '5521959036760';
+  const zap = (msg) => `https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`;
+  document.querySelectorAll('.js-teste').forEach(a => a.href = zap('Olá! Quero testar o TécnicoPro grátis por 7 dias.'));
+  document.querySelectorAll('.js-plano').forEach(a => a.href = zap(`Olá! Quero contratar o TécnicoPro, plano ${a.dataset.plano}.`));
+  for (const [k, p] of Object.entries(PRECOS)) {
+    if (!p.valor) continue;
+    const el = document.querySelector(`[data-preco="${k}"]`);
+    if (el) el.innerHTML = `${p.valor} <small>${p.periodo}</small>`;
+    const sub = document.querySelector(`[data-preco-sub="${k}"]`);
+    if (sub && p.sub) sub.textContent = p.sub;
+  }
+  document.getElementById('ano').textContent = new Date().getFullYear();
+</script>
+
+</html>

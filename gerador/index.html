@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A1F3C">
+<title>Gerador TécnicoPro</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-192.png">
+<style>
+  :root {
+    --fundo: #071429; --painel: #0F2341; --painel2: #132B4F; --linha: #23406A; --tinta: #E8EEF8; --suave: #9AAECB;
+    --azul: #1257E6; --ciano: #12C2E9; --ok: #3FCB86; --alerta: #F2A64A; --erro: #FF7A70;
+    --f: 'Segoe UI', Roboto, system-ui, sans-serif; --mono: 'Roboto Mono', Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fundo); color: var(--tinta); font: 16px/1.5 var(--f); }
+  body { padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .app { max-width: 760px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 0; }
+  .marca { display: flex; align-items: center; gap: 12px; }
+  .marca img { width: 42px; height: 42px; border-radius: 11px; }
+  .marca b { display: block; font-size: 1.15rem; }
+  .marca small { color: var(--suave); font-size: .8rem; }
+  .chip { font-size: .78rem; color: var(--suave); border: 1px solid var(--linha); border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
+  .chip.ok { color: var(--ok); border-color: rgba(63,203,134,.4); }
+  .card { background: var(--painel); border: 1px solid var(--linha); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; }
+  h2 { font-size: 1.05rem; margin: 0 0 12px; }
+  p { margin: 0 0 12px; }
+  .desc { color: var(--suave); font-size: .92rem; }
+  label { display: grid; gap: 6px; font-size: .9rem; color: var(--suave); margin-bottom: 14px; }
+  input, select { width: 100%; font: 500 1.05rem var(--f); color: var(--tinta); background: var(--painel2); border: 1.5px solid var(--linha); border-radius: 12px; padding: 13px 14px; min-height: 50px; }
+  input:focus, select:focus { outline: none; border-color: var(--ciano); }
+  input.codigo { font: 700 1.3rem var(--mono); letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+  input[type=file] { padding: 10px; font-size: .95rem; }
+  .linha2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .botoes { display: grid; gap: 10px; }
+  .botoes.tres { grid-template-columns: repeat(3, 1fr); }
+  button, .btn { font: 600 1rem var(--f); border: 0; border-radius: 12px; padding: 14px 16px; min-height: 52px; cursor: pointer; color: #fff; background: var(--painel2); border: 1.5px solid var(--linha); text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  button.pri { background: var(--azul); border-color: var(--azul); }
+  button.teste { background: linear-gradient(135deg, #0E8A6A, #12A97F); border-color: #12A97F; }
+  button:disabled { opacity: .5; cursor: default; }
+  button:focus-visible, .btn:focus-visible { outline: 3px solid var(--ciano); outline-offset: 2px; }
+  button small { display: block; font-weight: 500; opacity: .85; font-size: .8rem; }
+  .plano-btn { flex-direction: column; gap: 2px; padding: 12px; }
+  .aviso { border-radius: 12px; padding: 12px 14px; font-size: .93rem; margin-bottom: 14px; }
+  .aviso.erro { background: rgba(255,122,112,.12); border: 1px solid rgba(255,122,112,.4); color: #FFC3BD; }
+  .aviso.alerta { background: rgba(242,166,74,.12); border: 1px solid rgba(242,166,74,.4); color: #FFD9A8; }
+  .aviso.ok { background: rgba(63,203,134,.12); border: 1px solid rgba(63,203,134,.4); color: #BFF2D6; }
+  .resumo { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: .95rem; margin-bottom: 16px; }
+  .resumo dt { color: var(--suave); }
+  .resumo dd { margin: 0; font-weight: 600; word-break: break-word; }
+  .mono { font-family: var(--mono); }
+  textarea { width: 100%; min-height: 110px; font: .78rem/1.4 var(--mono); color: var(--suave); background: var(--painel2); border: 1px solid var(--linha); border-radius: 10px; padding: 10px; resize: vertical; }
+  .abas { display: flex; gap: 8px; margin-bottom: 16px; }
+  .abas button { flex: 1; min-height: 44px; padding: 10px; }
+  .abas button[aria-selected=true] { background: var(--azul); border-color: var(--azul); }
+  .lista { display: grid; gap: 8px; }
+  .reg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 14px; background: var(--painel2); border-radius: 12px; font-size: .9rem; }
+  .reg b { font-size: .98rem; }
+  .reg .pl { font-size: .78rem; border-radius: 999px; padding: 2px 9px; align-self: start; white-space: nowrap; background: rgba(18,87,230,.25); color: #A9C6FF; }
+  .reg .pl.av { background: rgba(18,169,127,.22); color: #9FE8CB; }
+  .reg span.s { color: var(--suave); grid-column: 1 / -1; }
+  .rodape { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; color: var(--suave); font-size: .82rem; margin-top: 8px; }
+  .rodape button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
+  [hidden] { display: none !important; }
+  @media (max-width: 560px) { .botoes.tres, .linha2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="marca"><img src="icone-192.png" alt=""><div><b>Gerador TécnicoPro</b><small>Licenças da MG Telecom</small></div></div>
+    <span class="chip" id="estado-chave">Sem chave</span>
+  </header>
+
+  <!-- 1) Importar a chave (primeira vez) -->
+  <section class="card" id="tela-importar" hidden>
+    <h1>Importar a chave</h1>
+    <p class="desc">No PC, rode <b>Exportar chave para o tablet.bat</b> (pasta MG Telecom - Licencas) e passe o arquivo <span class="mono">chave-tablet.mgkey</span> para este tablet. Depois escolha o arquivo e digite a senha que você criou.</p>
+    <div class="aviso erro" id="imp-erro" hidden></div>
+    <label for="imp-arq">Arquivo da chave (.mgkey)<input type="file" id="imp-arq" accept=".mgkey,application/json,text/plain,*/*"></label>
+    <label for="imp-senha">Senha da chave<input type="password" id="imp-senha" autocomplete="current-password"></label>
+    <button class="pri" id="imp-ok" style="width:100%">Importar e desbloquear</button>
+    <p class="desc" style="margin:12px 0 0">A chave fica guardada <b>cifrada</b> neste navegador. Sem a senha ela não serve para nada. Depois de importar, apague o arquivo .mgkey de Downloads, Drive ou de onde ele veio.</p>
+  </section>
+
+  <!-- 2) Desbloquear -->
+  <section class="card" id="tela-bloqueio" hidden>
+    <h1>Desbloquear</h1>
+    <p class="desc">Digite a senha da chave. O gerador bloqueia sozinho depois de 15 minutos sem uso.</p>
+    <div class="aviso erro" id="blq-erro" hidden></div>
+    <label for="blq-senha">Senha da chave<input type="password" id="blq-senha" autocomplete="current-password"></label>
+    <button class="pri" id="blq-ok" style="width:100%">Desbloquear</button>
+  </section>
+
+  <!-- 3) Gerar -->
+  <div id="tela-app" hidden>
+    <div class="abas" role="tablist">
+      <button role="tab" aria-selected="true" id="aba-gerar">Gerar licença</button>
+      <button role="tab" aria-selected="false" id="aba-reg">Registro (<span id="n-reg">0</span>)</button>
+    </div>
+
+    <section class="card" id="painel-gerar">
+      <div class="aviso erro" id="ger-erro" hidden></div>
+      <div class="aviso alerta" id="ger-repetido" hidden></div>
+      <label for="g-codigo">Código de ativação que o cliente enviou<input class="codigo" id="g-codigo" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABCD-EFGH-JKLM-NPQR" maxlength="19"></label>
+      <div class="linha2">
+        <label for="g-cliente">Nome do cliente<input id="g-cliente" autocomplete="off" placeholder="Ex.: João Informática"></label>
+        <label for="g-tel">WhatsApp do cliente<input id="g-tel" inputmode="tel" autocomplete="off" placeholder="(21) 99999-9999"></label>
+      </div>
+      <label for="g-meses">Validade dos planos pagos<select id="g-meses"><option value="1" selected>1 mês</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option></select></label>
+      <div class="botoes tres">
+        <button class="teste plano-btn" data-plano="Avaliação">Teste grátis<small>7 dias</small></button>
+        <button class="pri plano-btn" data-plano="Técnico">Técnico<small>R$ 59,90/mês</small></button>
+        <button class="pri plano-btn" data-plano="Empresa">Empresa<small>1 por pendrive (até 3)</small></button>
+      </div>
+    </section>
+
+    <section class="card" id="painel-resultado" hidden>
+      <div class="aviso ok" id="res-titulo"></div>
+      <dl class="resumo" id="res-resumo"></dl>
+      <div class="botoes">
+        <button class="pri" id="res-zap">Enviar pelo WhatsApp do cliente</button>
+        <button id="res-arquivo">Compartilhar arquivo da licença</button>
+        <button id="res-copiar">Copiar texto da licença</button>
+        <a class="btn" id="res-baixar" download>Baixar arquivo .mglic</a>
+        <button id="res-nova">Gerar outra licença</button>
+      </div>
+      <p class="desc" style="margin:14px 0 6px">O cliente ativa clicando em <b>Colar licença</b> (texto) ou <b>Carregar licença</b> (arquivo) na tela de ativação.</p>
+      <textarea id="res-texto" readonly aria-label="Texto da licença"></textarea>
+      <div class="aviso" id="res-msg" hidden style="margin:12px 0 0"></div>
+    </section>
+
+    <section class="card" id="painel-reg" hidden>
+      <h2>Licenças geradas neste tablet</h2>
+      <p class="desc">Para juntar com o registro do PC, importe o <span class="mono">licencas-emitidas.csv</span> de lá e exporte o daqui para o PC. O aviso de teste repetido usa as duas listas.</p>
+      <div class="botoes" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+        <button id="reg-exportar">Exportar CSV</button>
+        <label class="btn" for="reg-importar" style="margin:0;color:#fff">Importar CSV do PC<input type="file" id="reg-importar" accept=".csv,text/csv,text/plain" hidden></label>
+      </div>
+      <div class="aviso" id="reg-msg" hidden></div>
+      <div class="lista" id="reg-lista"></div>
+    </section>
+
+    <div class="rodape">
+      <span id="digital"></span>
+      <span style="display:flex;gap:8px"><button id="bloquear">Bloquear agora</button><button id="remover">Remover chave</button></span>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const CH_CHAVE = 'tp-gerador-chave', CH_REG = 'tp-gerador-registro';
+const ALFA = /^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){3}$/;
+const enc = new TextEncoder();
+let chavePriv = null, ultimo = null, timer = null;
+const $ = (s) => document.querySelector(s);
+const mostra = (id) => { for (const t of ['tela-importar', 'tela-bloqueio', 'tela-app']) $('#' + t).hidden = t !== id; };
+const erro = (el, m) => { el.textContent = m || ''; el.hidden = !m; };
+const ler = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const grava = (k, v) => { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } };
+const b64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const deB64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const doisDig = (n) => String(n).padStart(2, '0');
+const dataIso = (d) => `${d.getFullYear()}-${doisDig(d.getMonth() + 1)}-${doisDig(d.getDate())}`;
+const dataBr = (iso) => iso ? iso.split('-').reverse().join('/') : 'vitalícia';
+const somaMeses = (d, m) => { const r = new Date(d.getFullYear(), d.getMonth() + m, 1); r.setDate(Math.min(d.getDate(), new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate())); return r; };
+const registro = () => { try { return JSON.parse(ler(CH_REG) || '[]'); } catch (e) { return []; } };
+
+// ---- chave: PBKDF2-SHA256 -> AES-256-CBC + HMAC-SHA256 (mesmo formato do Exportar chave para o tablet.ps1)
+async function abrirChave(textoMgkey, senha) {
+  let k; try { k = JSON.parse(textoMgkey); } catch (e) { throw new Error('Este arquivo não é uma chave do TécnicoPro (.mgkey).'); }
+  if (k.formato !== 'MGKEY1') throw new Error('Este arquivo não é uma chave do TécnicoPro (.mgkey).');
+  const base = await crypto.subtle.importKey('raw', enc.encode(senha), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: deB64(k.sal), iterations: k.iteracoes, hash: 'SHA-256' }, base, 512));
+  const iv = deB64(k.iv), ct = deB64(k.dados), juntos = new Uint8Array(iv.length + ct.length); juntos.set(iv); juntos.set(ct, iv.length);
+  const hm = await crypto.subtle.importKey('raw', bits.slice(32), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+  if (!(await crypto.subtle.verify('HMAC', hm, deB64(k.mac), juntos))) throw new Error('Senha errada (ou arquivo da chave alterado).');
+  const ae = await crypto.subtle.importKey('raw', bits.slice(0, 32), 'AES-CBC', false, ['decrypt']);
+  const jwk = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, ae, ct)));
+  bits.fill(0);
+  const priv = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  return { priv, digital: k.digital || '' };
+}
+
+function armaBloqueio() { clearTimeout(timer); timer = setTimeout(bloquear, 15 * 60 * 1000); }
+function bloquear() { chavePriv = null; clearTimeout(timer); $('#blq-senha').value = ''; iniciar(); }
+['click', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { if (chavePriv) armaBloqueio(); }, { passive: true }));
+
+function iniciar() {
+  const tem = !!ler(CH_CHAVE);
+  $('#estado-chave').textContent = chavePriv ? 'Desbloqueado' : tem ? 'Bloqueado' : 'Sem chave';
+  $('#estado-chave').className = 'chip' + (chavePriv ? ' ok' : '');
+  mostra(chavePriv ? 'tela-app' : tem ? 'tela-bloqueio' : 'tela-importar');
+  if (chavePriv) { $('#n-reg').textContent = registro().length; desenhaRegistro(); }
+}
+
+$('#imp-ok').onclick = async () => {
+  const f = $('#imp-arq').files[0], s = $('#imp-senha').value; erro($('#imp-erro'));
+  if (!f) return erro($('#imp-erro'), 'Escolha o arquivo chave-tablet.mgkey.');
+  if (!s) return erro($('#imp-erro'), 'Digite a senha da chave.');
+  $('#imp-ok').disabled = true; $('#imp-ok').textContent = 'Conferindo…';
+  try {
+    const txt = await f.text(), r = await abrirChave(txt, s);
+    if (!grava(CH_CHAVE, txt)) throw new Error('O navegador não deixou guardar a chave. Saia da aba anônima e tente de novo.');
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
+    chavePriv = r.priv; $('#digital').textContent = 'Digital da chave: ' + r.digital; $('#imp-senha').value = ''; armaBloqueio(); iniciar();
+  } catch (e) { erro($('#imp-erro'), e.message); }
+  finally { $('#imp-ok').disabled = false; $('#imp-ok').textContent = 'Importar e desbloquear'; }
+};
+
+$('#blq-ok').onclick = async () => {
+  erro($('#blq-erro')); const s = $('#blq-senha').value; if (!s) return erro($('#blq-erro'), 'Digite a senha da chave.');
+  $('#blq-ok').disabled = true; $('#blq-ok').textContent = 'Conferindo…';
+  try { const r = await abrirChave(ler(CH_CHAVE), s); chavePriv = r.priv; $('#digital').textContent = 'Digital da chave: ' + r.digital; $('#blq-senha').value = ''; armaBloqueio(); iniciar(); }
+  catch (e) { erro($('#blq-erro'), e.message); }
+  finally { $('#blq-ok').disabled = false; $('#blq-ok').textContent = 'Desbloquear'; }
+};
+$('#blq-senha').addEventListener('keydown', e => { if (e.key === 'Enter') $('#blq-ok').click(); });
+$('#imp-senha').addEventListener('keydown', e => { if (e.key === 'Enter') $('#imp-ok').click(); });
+$('#bloquear').onclick = bloquear;
+
+let confirmaRemover = false;
+$('#remover').onclick = () => {
+  if (!confirmaRemover) { confirmaRemover = true; $('#remover').textContent = 'Toque de novo para remover'; setTimeout(() => { confirmaRemover = false; $('#remover').textContent = 'Remover chave'; }, 4000); return; }
+  try { localStorage.removeItem(CH_CHAVE); } catch (e) {}
+  confirmaRemover = false; $('#remover').textContent = 'Remover chave'; bloquear();
+};
+
+// ---- abas
+const abas = { 'aba-gerar': 'painel-gerar', 'aba-reg': 'painel-reg' };
+for (const [b, p] of Object.entries(abas)) $('#' + b).onclick = () => {
+  for (const [b2, p2] of Object.entries(abas)) { $('#' + b2).setAttribute('aria-selected', b2 === b); $('#' + p2).hidden = b2 !== b; }
+  $('#painel-resultado').hidden = true; if (b === 'aba-reg') desenhaRegistro();
+};
+
+// ---- código: formata enquanto digita
+$('#g-codigo').addEventListener('input', (e) => {
+  const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
+  e.target.value = v.replace(/(.{4})(?=.)/g, '$1-');
+  verificaRepetido();
+});
+function verificaRepetido() {
+  const c = $('#g-codigo').value, box = $('#ger-repetido');
+  const ant = registro().filter(r => r.codigo === c && r.plano === 'Avaliação');
+  box.hidden = !(ALFA.test(c) && ant.length);
+  if (!box.hidden) box.textContent = `Este pendrive já recebeu ${ant.length} teste(s) grátis (último em ${dataBr(ant[ant.length - 1].emitida)}, para ${ant[ant.length - 1].cliente}). Para gerar outro teste mesmo assim, toque de novo em "Teste grátis".`;
+}
+
+// ---- gerar
+let confirmaTeste = '';
+document.querySelectorAll('[data-plano]').forEach(b => b.onclick = () => gerar(b.dataset.plano));
+async function gerar(plano) {
+  erro($('#ger-erro'));
+  const codigo = $('#g-codigo').value.trim(), cliente = $('#g-cliente').value.trim(), telefone = $('#g-tel').value.trim();
+  if (!ALFA.test(codigo)) return erro($('#ger-erro'), 'Código de ativação inválido. Ele tem 16 letras e números, como ABCD-EFGH-JKLM-NPQR (sem I, O, 0 e 1).');
+  if (!cliente) return erro($('#ger-erro'), 'Informe o nome do cliente.');
+  if (plano === 'Avaliação' && registro().some(r => r.codigo === codigo && r.plano === 'Avaliação') && confirmaTeste !== codigo) { confirmaTeste = codigo; verificaRepetido(); return; }
+  confirmaTeste = '';
+  const hoje = new Date(), meses = +$('#g-meses').value;
+  const fim = plano === 'Avaliação' ? new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 7) : somaMeses(hoje, meses);
+  const rnd = crypto.getRandomValues(new Uint8Array(3)), sufixo = Array.from(rnd, x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+  const emitida = dataIso(hoje), validade = dataIso(fim);
+  const id = 'L' + emitida.replace(/-/g, '') + '-' + sufixo;
+  const conteudo = JSON.stringify({ v: 1, id, cliente, documento: '', email: '', telefone, plano, codigo, emitida, validade });
+  try {
+    const sig = new Uint8Array(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', chavePriv, enc.encode(conteudo)));
+    const texto = JSON.stringify({ conteudo, assinatura: b64(sig) }, null, 2);
+    const nomeArq = (cliente.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, '') || 'cliente') + '_' + emitida + '.mglic';
+    const reg = registro(); reg.push({ id, emitida, cliente, documento: '', email: '', telefone, plano, codigo, validade, arquivo: nomeArq, origem: 'tablet' });
+    grava(CH_REG, JSON.stringify(reg)); $('#n-reg').textContent = reg.length;
+    ultimo = { id, cliente, telefone, plano, codigo, validade, texto, nomeArq };
+    mostraResultado();
+  } catch (e) { erro($('#ger-erro'), 'Não foi possível assinar: ' + e.message); }
+}
+
+function mensagem(u) {
+  return u.plano === 'Avaliação'
+    ? `Olá! Segue seu TESTE GRÁTIS do TécnicoPro, válido até ${dataBr(u.validade)}. Na tela de ativação, clique em "Colar licença" e cole o texto abaixo (ou use "Carregar licença" com o arquivo). Qualquer dúvida é só chamar aqui. Bons atendimentos!`
+    : `Olá! Segue sua licença do TécnicoPro (plano ${u.plano}, válida até ${dataBr(u.validade)}). Na tela de ativação, clique em "Colar licença" e cole o texto abaixo (ou use "Carregar licença" com o arquivo).`;
+}
+
+function mostraResultado() {
+  const u = ultimo;
+  $('#painel-gerar').hidden = true; $('#painel-resultado').hidden = false; erro($('#res-msg'));
+  $('#res-titulo').textContent = `Licença gerada: ${u.plano === 'Avaliação' ? 'teste grátis' : 'plano ' + u.plano}, válida até ${dataBr(u.validade)}.`;
+  const dl = $('#res-resumo'); dl.innerHTML = '';
+  for (const [k, v] of [['Cliente', u.cliente], ['WhatsApp', u.telefone || '—'], ['Código', u.codigo], ['Licença', u.id]]) {
+    const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; if (k === 'Código' || k === 'Licença') dd.className = 'mono'; dl.append(dt, dd);
+  }
+  $('#res-texto').value = u.texto;
+  const blob = new Blob([u.texto], { type: 'application/octet-stream' });
+  const a = $('#res-baixar'); if (a.dataset.url) URL.revokeObjectURL(a.dataset.url); a.dataset.url = URL.createObjectURL(blob); a.href = a.dataset.url; a.download = u.nomeArq;
+  const tel = u.telefone.replace(/\D/g, '');
+  $('#res-zap').textContent = tel ? 'Enviar pelo WhatsApp do cliente' : 'Enviar pelo WhatsApp (escolher contato)';
+}
+
+function avisoRes(m, tipo) { const el = $('#res-msg'); el.textContent = m; el.className = 'aviso ' + (tipo || 'ok'); el.hidden = false; }
+
+$('#res-zap').onclick = () => {
+  const u = ultimo, tel = u.telefone.replace(/\D/g, '');
+  const num = tel ? (tel.length <= 11 ? '55' + tel : tel) : '';
+  const txt = mensagem(u) + '\n\n' + u.texto;
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(txt)}`, '_blank', 'noopener');
+};
+$('#res-arquivo').onclick = async () => {
+  const u = ultimo;
+  const arq = new File([u.texto], u.nomeArq.replace(/\.mglic$/, '.txt'), { type: 'text/plain' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [arq] })) { await navigator.share({ files: [arq], text: mensagem(u) }); return; }
+    avisoRes('Este navegador não compartilha arquivos. Use "Baixar arquivo .mglic" ou "Enviar pelo WhatsApp".', 'alerta');
+  } catch (e) { if (e.name !== 'AbortError') avisoRes('Não foi possível compartilhar: ' + e.message, 'alerta'); }
+};
+$('#res-copiar').onclick = async () => {
+  try { await navigator.clipboard.writeText(ultimo.texto); avisoRes('Texto da licença copiado. Cole na conversa com o cliente.'); }
+  catch (e) { const t = $('#res-texto'); t.focus(); t.select(); avisoRes('Selecionei o texto abaixo: toque e segure para copiar.', 'alerta'); }
+};
+$('#res-nova').onclick = () => { $('#painel-resultado').hidden = true; $('#painel-gerar').hidden = false; for (const id of ['#g-codigo', '#g-cliente', '#g-tel']) $(id).value = ''; erro($('#ger-repetido')); $('#g-codigo').focus(); };
+
+// ---- registro
+function desenhaRegistro() {
+  const l = registro().slice().reverse(), box = $('#reg-lista'); box.innerHTML = '';
+  if (!l.length) { box.innerHTML = '<p class="desc" style="margin:0">Nenhuma licença ainda. As licenças geradas aqui aparecem nesta lista.</p>'; return; }
+  for (const r of l.slice(0, 200)) {
+    const d = document.createElement('div'); d.className = 'reg';
+    const b = document.createElement('b'); b.textContent = r.cliente;
+    const p = document.createElement('span'); p.className = 'pl' + (r.plano === 'Avaliação' ? ' av' : ''); p.textContent = r.plano === 'Avaliação' ? 'Teste' : r.plano;
+    const s = document.createElement('span'); s.className = 's'; s.textContent = `${r.codigo} · emitida ${dataBr(r.emitida)} · até ${dataBr(r.validade)}${r.origem === 'pc' ? ' · PC' : ''}`;
+    d.append(b, p, s); box.append(d);
+  }
+}
+const CAB = ['id', 'emitida', 'cliente', 'documento', 'email', 'telefone', 'plano', 'codigo', 'validade', 'arquivo'];
+$('#reg-exportar').onclick = async () => {
+  const linhas = [CAB.join(';')].concat(registro().filter(r => r.origem !== 'pc').map(r => CAB.map(c => String(c === 'validade' && !r[c] ? 'vitalícia' : (r[c] || '')).replace(/[;\r\n]/g, ' ')).join(';')));
+  const txt = '﻿' + linhas.join('\r\n') + '\r\n', nome = `licencas-tablet_${dataIso(new Date())}.csv`;
+  const arq = new File([txt], nome, { type: 'text/csv' });
+  try { if (navigator.canShare && navigator.canShare({ files: [arq] })) { await navigator.share({ files: [arq] }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(arq); a.download = nome; document.body.append(a); a.click(); a.remove();
+};
+$('#reg-importar').onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return; const box = $('#reg-msg');
+  try {
+    const linhas = (await f.text()).replace(/^﻿/, '').split(/\r?\n/).filter(x => x.trim());
+    const cab = linhas.shift().split(';'); if (!cab.includes('codigo') || !cab.includes('plano')) throw new Error('Este arquivo não é o licencas-emitidas.csv.');
+    const reg = registro(), ids = new Set(reg.map(r => r.id)); let novos = 0;
+    for (const l of linhas) { const v = l.split(';'), o = {}; cab.forEach((c, i) => o[c] = v[i] || ''); if (o.validade === 'vitalícia') o.validade = ''; if (!o.id || ids.has(o.id)) continue; o.origem = 'pc'; reg.push(o); ids.add(o.id); novos++; }
+    reg.sort((a, b) => (a.emitida || '').localeCompare(b.emitida || '')); grava(CH_REG, JSON.stringify(reg));
+    box.className = 'aviso ok'; box.textContent = `${novos} licença(s) do PC importadas.`; box.hidden = false; $('#n-reg').textContent = reg.length; desenhaRegistro();
+  } catch (err) { box.className = 'aviso erro'; box.textContent = err.message; box.hidden = false; }
+  e.target.value = '';
+};
+
+if (!window.crypto || !crypto.subtle) { document.body.innerHTML = '<div class="app"><div class="card" style="margin-top:24px"><h1>Abra pelo endereço seguro</h1><p class="desc">O gerador precisa ser aberto pelo endereço https:// (GitHub Pages) para usar a criptografia do navegador.</p></div></div>'; }
+else { iniciar(); if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); }
+</script>
+</body>
+</html>
